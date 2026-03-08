@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "YOUR_HEADER_HERE",
+    "payload": "YOUR_PAYLOAD_HERE",
+    "signature": "YOUR_SIGNATURE_HERE"
+  },
+  "frame": {
+    "version": "1",
+    "name": "CLAWXBOT",
+    "iconUrl": "https://your-domain.com/icon.png",
+    "homeUrl": "https://your-domain.com",
+    "imageUrl": "https://your-domain.com/og.png",
+    "buttonTitle": "Activate CLAWXBOT",
+    "splashImageUrl": "https://your-domain.com/splash.png",
+    "splashBackgroundColor": "#0f0f0f"
+  }
+}
