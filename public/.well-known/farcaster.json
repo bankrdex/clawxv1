@@ -1,17 +1,18 @@
 {
   "accountAssociation": {
-    "header": "YOUR_HEADER_HERE",
-    "payload": "YOUR_PAYLOAD_HERE",
-    "signature": "YOUR_SIGNATURE_HERE"
+    "header": "eyJmaWQiOjEwNzk5MjIsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg3NWNhQTExM0Y1NzJhNDA3RWRiOGE0OUZjZTFjZjk0MTBFZjE4ODFjIn0",
+    "payload": "eyJkb21haW4iOiJjbGF3eHYxLnZlcmNlbC5hcHAifQ",
+    "signature": "1kAD7/c3b6gdZO01B8P8UskoKZuMPupC2WvVb1Yw3p5wsUX97O+qJ2a6yq7DVklhQ1Cz0L3rZ8Frl4wzPfrKzxs="
   },
   "frame": {
     "version": "1",
     "name": "CLAWXBOT",
-    "iconUrl": "https://your-domain.com/icon.png",
-    "homeUrl": "https://your-domain.com",
-    "imageUrl": "https://your-domain.com/og.png",
+    "iconUrl": "https://clawxv1.vercel.app/icon.png",
+    "homeUrl": "https://clawxv1.vercel.app",
+    "imageUrl": "https://clawxv1.vercel.app/image.png",
     "buttonTitle": "Activate CLAWXBOT",
-    "splashImageUrl": "https://your-domain.com/splash.png",
-    "splashBackgroundColor": "#0f0f0f"
+    "splashImageUrl": "https://clawxv1.vercel.app/splash.png",
+    "splashBackgroundColor": "#0f0f0f",
+    "webhookUrl": "https://clawxv1.vercel.app/api/webhook"
   }
 }
