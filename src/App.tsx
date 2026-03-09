@@ -82,7 +82,7 @@ export default function App() {
         setStep("pending_approval");
         setStatus("");
         // Open approval URL in Farcaster
-        await sdk.actions.openMiniApp({ url: data.signer_approval_url });
+        await sdk.actions.openUrl(data.signer_approval_url);
       } else {
         setStatus("Failed to create signer.");
       }
@@ -182,7 +182,7 @@ export default function App() {
             </p>
           </div>
           {approvalUrl ? (
-            <button style={styles.buttonOutline} onClick={() => sdk.actions.openMiniApp({ url: approvalUrl })}>
+            <button style={styles.buttonOutline} onClick={() => sdk.actions.openUrl(approvalUrl)}>
               Open Approval Again
             </button>
           ) : null}
