@@ -4,6 +4,8 @@ import sdk from "@farcaster/miniapp-sdk";
 const PLATFORM_WALLET = "0x2805e9dbce2839c5feae858723f9499f15fd88cf";
 const USDC_BASE = "eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const BACKEND = "https://clawxbot-backend.onrender.com";
+const SKILL_URL = "https://clawxbot-backend.onrender.com/SKILL.md";
+const MINI_APP_URL = "https://farcaster.xyz/miniapps/WmVLKV33joEi/clawxbot";
 
 const TIERS = [
   { id: "human",     label: "Human",           price: 1,  amount: "1000000",  desc: "Auto-reply to comments on your casts" },
@@ -24,6 +26,7 @@ export default function App() {
   const [tier, setTier] = useState("human");
   const [currentTier, setCurrentTier] = useState("human");
   const [status, setStatus] = useState("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -51,11 +54,9 @@ export default function App() {
       const data = await res.json();
       setTone(data.tone_prompt || "");
       setCurrentTier(data.subscription_tier || "human");
-
       const signerRes = await fetch(`${BACKEND}/api/signers/status/${userFid}`);
       const signerData = await signerRes.json();
       if (!signerData.approved) { setStep("pending_approval"); return; }
-
       if (data.subscription_active === 1) {
         setExpires(data.subscription_expires);
         setStep("active");
@@ -112,19 +113,16 @@ export default function App() {
       amount: t.amount,
       recipientAddress: PLATFORM_WALLET,
     });
-
     if (!result.success) {
       setStatus(result.reason === "rejected_by_user" ? "Cancelled." : "Payment failed.");
       return;
     }
-
     setStatus("Verifying payment...");
     const res = await fetch(`${BACKEND}/api/payments/confirm`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fid, tx_hash: result.send.transaction }),
     });
-
     if (res.ok) {
       const data = await res.json();
       setExpires(data.subscription_expires);
@@ -144,6 +142,22 @@ export default function App() {
       body: JSON.stringify({ tone_prompt: tone }),
     });
     setStatus("Tone saved.");
+  }
+
+  async function copySkillUrl() {
+    try {
+      await navigator.clipboard.writeText(SKILL_URL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setStatus("Copy failed — long press the URL to copy.");
+    }
+  }
+
+  async function shareOnFarcaster() {
+    await sdk.actions.composeCast({
+      text: `🦞 CLAWXBOT now supports AI agents!\n\nAgents can auto-subscribe and manage Farcaster replies using this skill:\n\n${SKILL_URL}\n\nMini App: ${MINI_APP_URL}`,
+    });
   }
 
   const tierInfo = TIERS.find(t => t.id === currentTier);
@@ -243,6 +257,22 @@ export default function App() {
           <button style={styles.buttonOutline} onClick={() => handlePay(tier)}>
             {tier === currentTier ? "Renew (+30 days)" : `Upgrade to ${TIERS.find(t2 => t2.id === tier)?.label}`}
           </button>
+
+          <div style={styles.skillCard}>
+            <p style={styles.cardTitle}>🤖 For AI Agents</p>
+            <p style={styles.tierDesc}>Share this skill URL with your agent to auto-subscribe and manage replies:</p>
+            <div style={styles.codeBox}>
+              <span style={styles.codeText}>{SKILL_URL}</span>
+            </div>
+            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+              <button style={styles.buttonSmall} onClick={copySkillUrl}>
+                {copied ? "Copied!" : "Copy URL"}
+              </button>
+              <button style={styles.buttonSmall} onClick={shareOnFarcaster}>
+                Share on Farcaster
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -262,16 +292,19 @@ const styles: Record<string, React.CSSProperties> = {
   cardText: { color: "#aaa", fontSize: 14, margin: 0 },
   button: { width: "100%", padding: "14px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 600, cursor: "pointer", marginBottom: 10 },
   buttonOutline: { width: "100%", padding: "14px", background: "transparent", color: "#7c3aed", border: "1px solid #7c3aed", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", marginBottom: 10 },
-  buttonSmall: { padding: "8px 16px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, cursor: "pointer", marginTop: 8 },
-  badge: { borderRadius: 10, padding: "10px 14px", marginBottom: 20, display: "flex", gap: 6, flexWrap: "wrap" },
+  buttonSmall: { padding: "8px 16px", background: "#7c3aed", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, cursor: "pointer" },
+  badge: { borderRadius: 10, padding: "10px 14px", marginBottom: 20, display: "flex", gap: 6, flexWrap: "wrap" as const },
   section: { marginBottom: 20 },
   label: { fontSize: 13, color: "#aaa", marginBottom: 8 },
-  textarea: { width: "100%", background: "#1a1a1a", color: "#fff", border: "1px solid #333", borderRadius: 10, padding: 12, fontSize: 14, resize: "vertical", boxSizing: "border-box" },
-  statusText: { textAlign: "center", color: "#aaa", fontSize: 13, marginTop: 12 },
+  textarea: { width: "100%", background: "#1a1a1a", color: "#fff", border: "1px solid #333", borderRadius: 10, padding: 12, fontSize: 14, resize: "vertical" as const, boxSizing: "border-box" as const },
+  statusText: { textAlign: "center" as const, color: "#aaa", fontSize: 13, marginTop: 12 },
   tierCard: { background: "#1a1a1a", border: "1px solid #333", borderRadius: 12, padding: 14, marginBottom: 10, cursor: "pointer" },
   tierCardSelected: { border: "1px solid #7c3aed", background: "#1a0a2e" },
   tierRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 },
   tierLabel: { fontWeight: 600, fontSize: 15 },
   tierPrice: { color: "#7c3aed", fontWeight: 700, fontSize: 15 },
   tierDesc: { color: "#888", fontSize: 13, margin: 0 },
+  skillCard: { background: "#0a0a1a", border: "1px solid #2a2a4a", borderRadius: 12, padding: 14, marginTop: 16 },
+  codeBox: { background: "#1a1a2e", borderRadius: 8, padding: "10px 12px", margin: "8px 0", wordBreak: "break-all" as const },
+  codeText: { color: "#a78bfa", fontSize: 12, fontFamily: "monospace" },
 };
