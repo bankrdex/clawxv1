@@ -3,7 +3,7 @@ import sdk from "@farcaster/miniapp-sdk";
 
 const PLATFORM_WALLET = "0x2805e9dbce2839c5feae858723f9499f15fd88cf";
 const USDC_BASE = "eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const BACKEND = "https://your-backend.com";
+const BACKEND = "https://clawxbot-backend.onrender.com";
 
 type Screen = "home" | "settings" | "loading";
 
